@@ -1293,6 +1293,12 @@ async function loadData() {
   try {
     showToast('🌿 Gathering field notes...');
     
+    // Check connection first
+    const { error: pingError } = await supabaseClient.from('entries').select('id').limit(1);
+    if (pingError && pingError.message !== 'JSON object requested, multiple (or no) rows returned') {
+       console.warn('Supabase ping failed, checking offline data');
+    }
+
     // Load Active Entries
     const { data: entryData, error: entryError } = await supabaseClient
       .from('entries')
@@ -1328,6 +1334,9 @@ async function loadData() {
       settings.botanicalWatermarks = settingsData.botanical_watermarks;
     }
 
+    // CRITICAL: Sync any data that exists locally but not in Supabase
+    await syncOfflineData();
+
     if (entries.length === 0) {
       await createEntry();
     } else {
@@ -1341,6 +1350,47 @@ async function loadData() {
     console.error('Supabase load error', e);
     showToast('⚠ Sync failed. Using offline storage.');
     loadOfflineData();
+  }
+}
+
+async function syncOfflineData() {
+  const localEntries = JSON.parse(localStorage.getItem('botanist_entries') || '[]');
+  if (localEntries.length === 0) return;
+
+  console.log('Checking for offline entries to sync...');
+  let syncCount = 0;
+
+  for (const localEntry of localEntries) {
+    // Check if entry exists in the current Supabase 'entries' list
+    const exists = entries.some(e => e.id === localEntry.id) || 
+                   trashedEntries.some(e => e.id === localEntry.id);
+    
+    if (!exists) {
+      console.log(`Syncing local entry: ${localEntry.id}`);
+      try {
+        const { error } = await supabaseClient.from('entries').upsert({
+          id: localEntry.id,
+          date: localEntry.date,
+          title: localEntry.title,
+          content: localEntry.content,
+          deleted_at: localEntry.deleted_at || null
+        });
+        if (!error) syncCount++;
+      } catch (err) {
+        console.error(`Failed to sync ${localEntry.id}`, err);
+      }
+    }
+  }
+
+  if (syncCount > 0) {
+    console.log(`Successfully synced ${syncCount} entries to Supabase`);
+    // Re-fetch to ensure state is consistent
+    const { data: entryData } = await supabaseClient
+      .from('entries')
+      .select('*')
+      .is('deleted_at', null)
+      .order('date', { ascending: false });
+    if (entryData) entries = entryData;
   }
 }
 
