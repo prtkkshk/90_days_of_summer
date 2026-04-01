@@ -1347,26 +1347,32 @@ async function loadData() {
     applySettings();
     showToast('🌿 Journal synced');
   } catch(e) { 
-    console.error('Supabase load error', e);
-    showToast('⚠ Sync failed. Using offline storage.');
+    console.error('Supabase load error:', e);
+    const errorMsg = e.message || 'Unknown error';
+    showToast(`⚠ Sync failed: ${errorMsg}. Using offline storage.`);
     loadOfflineData();
   }
 }
 
-async function syncOfflineData() {
+async function syncOfflineData(isManual = false) {
   const localEntries = JSON.parse(localStorage.getItem('botanist_entries') || '[]');
-  if (localEntries.length === 0) return;
+  if (localEntries.length === 0) {
+    if (isManual) showToast('No local data to sync');
+    return;
+  }
 
+  if (isManual) showToast('🌿 Starting manual sync...');
   console.log('Checking for offline entries to sync...');
   let syncCount = 0;
+  let failCount = 0;
 
   for (const localEntry of localEntries) {
     // Check if entry exists in the current Supabase 'entries' list
     const exists = entries.some(e => e.id === localEntry.id) || 
                    trashedEntries.some(e => e.id === localEntry.id);
     
-    if (!exists) {
-      console.log(`Syncing local entry: ${localEntry.id}`);
+    if (!exists || isManual) {
+      console.log(`Syncing entry: ${localEntry.id}`);
       try {
         const { error } = await supabaseClient.from('entries').upsert({
           id: localEntry.id,
@@ -1376,14 +1382,19 @@ async function syncOfflineData() {
           deleted_at: localEntry.deleted_at || null
         });
         if (!error) syncCount++;
+        else {
+          console.error(`Supabase error for ${localEntry.id}:`, error);
+          failCount++;
+        }
       } catch (err) {
         console.error(`Failed to sync ${localEntry.id}`, err);
+        failCount++;
       }
     }
   }
 
   if (syncCount > 0) {
-    console.log(`Successfully synced ${syncCount} entries to Supabase`);
+    showToast(`🌿 Synced ${syncCount} entries to Supabase`);
     // Re-fetch to ensure state is consistent
     const { data: entryData } = await supabaseClient
       .from('entries')
@@ -1391,6 +1402,11 @@ async function syncOfflineData() {
       .is('deleted_at', null)
       .order('date', { ascending: false });
     if (entryData) entries = entryData;
+    renderAll();
+  } else if (isManual && failCount === 0) {
+    showToast('🌿 Everything is up to date');
+  } else if (failCount > 0) {
+    showToast(`⚠ Failed to sync ${failCount} entries. Check console.`);
   }
 }
 
