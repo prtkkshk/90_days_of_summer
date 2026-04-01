@@ -2324,12 +2324,15 @@ async function init() {
   }
 }
 
+// Expose functions to window for onclick handlers
+window.restoreEntry = restoreEntry;
+window.permanentlyDeleteEntry = permanentlyDeleteEntry;
+
 document.addEventListener('DOMContentLoaded', init);
 
 // Save before unload
 window.addEventListener('beforeunload', () => {
-  flushCurrentEntry();
-  saveEntries();
+  saveCurrentEntry();
 });
 </script>
 
