@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>90 Days of Summer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+
+
+<style>
+/* ═══════════════════════════════════════════════════════
+   VARIABLES & RESET
+═══════════════════════════════════════════════════════ */
+:root {
+  --paper:        #f6edd9;
+  --paper-mid:    #eee0c0;
+  --paper-dark:   #d8c89c;
+  --ink:          #281808;
+  --ink-soft:     #4a3120;
+  --ink-faint:    #7a6040;
+  --green:        #3a5a3c;
+  --green-dark:   #253d27;
+  --green-light:  #7aab7c;
+  --brown:        #7c4a1e;
+  --brown-light:  #b07040;
+  --sepia:        #8b6914;
+  --sepia-light:  #d4a84c;
+  --leather:      #1e1208;
+  --leather-mid:  #2e1c0e;
+  --leather-edge: #4a2e12;
+  --red-brown:    #7c2e1a;
+  --shadow:       rgba(20,10,0,0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  background: var(--leather);
+  color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAPER TEXTURE FILTER
+═══════════════════════════════════════════════════════ */
+.paper-texture {
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 30px,
+      rgba(180,150,90,0.10) 30px,
+      rgba(180,150,90,0.10) 31px
+    ),
+    linear-gradient(160deg, rgba(255,255,240,0.4) 0%, transparent 50%, rgba(180,140,70,0.12) 100%),
+    radial-gradient(ellipse at 20% 20%, rgba(255,255,240,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(160,120,50,0.10) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════════════════
+   APP LAYOUT
+═══════════════════════════════════════════════════════ */
+#app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════ */
+#sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: linear-gradient(180deg, #1a0e06 0%, #251508 40%, #1e1208 100%);
+  border-right: 3px solid var(--leather-edge);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  box-shadow: 4px 0 20px var(--shadow);
+}
+
+/* Leather grain on sidebar */
+#sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Decorative stitching lines */
+#sidebar::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  right: 14px;
+  width: 1px;
+  background: repeating-linear-gradient(180deg,
+    rgba(180,130,60,0.3) 0px, rgba(180,130,60,0.3) 6px,
+    transparent 6px, transparent 12px);
+  pointer-events: none;
+}
+
+#sidebar-header {
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid rgba(180,120,40,0.25);
+  position: relative;
+}
+
+.sidebar-emblem {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 8px rgba(180,130,40,0.4));
+}
+
+#sidebar-header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #c9a06a;
+  text-align: center;
+  line-height: 1.5;
+}
+
+#sidebar-header .subtitle {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 12px;
+  color: var(--sepia-light);
+  text-align: center;
+  margin-top: 3px;
+  opacity: 0.7;
+}
+
+#new-entry-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #3a5a3c, #2a4030);
+  border: 1px solid rgba(106, 143, 108, 0.4);
+  border-radius: 2px;
+  color: #b8d8ba;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#new-entry-btn:hover {
+  background: linear-gradient(135deg, #4a6e4c, #3a5040);
+  border-color: rgba(122,171,124,0.6);
+  color: #cce8ce;
+}
+
+#entry-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(180,120,40,0.3) transparent;
+}
+
+#entry-list::-webkit-scrollbar { width: 4px; }
+#entry-list::-webkit-scrollbar-track { background: transparent; }
+#entry-list::-webkit-scrollbar-thumb { background: rgba(180,120,40,0.3); border-radius: 2px; }
+
+.entry-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(180,120,40,0.10);
+  transition: background 0.15s;
+  position: relative;
+}
+
+.entry-item:hover {
+  background: rgba(180,130,40,0.08);
+}
+
+.entry-item.active {
+  background: rgba(180,130,40,0.15);
+  border-left: 3px solid var(--sepia-light);
+  padding-left: 17px;
+}
+
+.entry-item.active::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0; width: 2px;
+  background: rgba(180,130,40,0.3);
+}
+
+.entry-item-date {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 13px;
+  color: var(--sepia-light);
+  opacity: 0.8;
+}
+
+.entry-item-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 12.5px;
+  color: #c9a570;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 400;
+}
+
+.entry-item-preview {
+  font-size: 11px;
+  color: rgba(160,120,60,0.6);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entry-item-actions {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.entry-item:hover .entry-item-actions { opacity: 1; }
+
+.entry-delete-btn {
+  background: none;
+  border: none;
+  color: rgba(200,80,40,0.6);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: color 0.15s, background 0.15s;
+}
+.entry-delete-btn:hover { color: #d04030; background: rgba(200,60,30,0.1); }
+
+#sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(180,120,40,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 12px;
+  background: none;
+  border: 1px solid rgba(180,120,40,0.25);
+  border-radius: 2px;
+  color: rgba(180,140,80,0.8);
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.sidebar-action-btn:hover {
+  background: rgba(180,120,40,0.10);
+  border-color: rgba(180,120,40,0.5);
+  color: #d4a84c;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN JOURNAL AREA
+═══════════════════════════════════════════════════════ */
+#journal-area {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px 28px;
+  background:
+    radial-gradient(ellipse at center, #2a1a0a 0%, #160c04 100%);
+  position: relative;
+}
+
+/* Desk texture */
+#journal-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE CONTAINER (the actual journal page)
+═══════════════════════════════════════════════════════ */
+#page-container {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1px;
+  box-shadow:
+    -4px 0 12px rgba(0,0,0,0.4),
+    4px 0 30px rgba(0,0,0,0.5),
+    0 4px 40px rgba(0,0,0,0.6),
+    inset -1px 0 2px rgba(255,255,240,0.15);
+  transform-origin: left center;
+  background-color: var(--paper);
+}
+
+/* The page - scrollable content area */
+#page-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120,90,40,0.3) transparent;
+}
+#page-scroll::-webkit-scrollbar { width: 6px; }
+#page-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+#page-scroll::-webkit-scrollbar-thumb { background: rgba(120,90,40,0.3); border-radius: 3px; }
+
+#page-inner {
+  flex: 1;
+  padding: 46px 64px 40px 72px;
+  position: relative;
+  min-height: 100%;
+}
+
+/* Left margin line */
+#page-inner::before {
+  content: '';
+  position: absolute;
+  left: 56px;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(180,100,80,0.25);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BOTANICAL WATERMARKS (SVG inline via pseudo-elements)
+═══════════════════════════════════════════════════════ */
+.watermark {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.075;
+}
+
+.watermark-tl {
+  top: -10px;
+  right: -10px;
+  width: 200px;
+  height: 220px;
+}
+
+.watermark-br {
+  bottom: -10px;
+  left: 30px;
+  width: 180px;
+  height: 200px;
+  transform: rotate(180deg);
+}
+
+.watermark-ml {
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%) rotate(90deg);
+  width: 140px;
+  height: 60px;
+  opacity: 0.05;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE TOP DECORATION
+═══════════════════════════════════════════════════════ */
+.page-top-rule {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--sepia);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  opacity: 0.5;
+  user-select: none;
+}
+
+.page-top-rule::before,
+.page-top-rule::after {
+  content: '';
+  display: inline-block;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sepia), transparent);
+  vertical-align: middle;
+  margin: 0 10px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ENTRY HEADER (date + title)
+═══════════════════════════════════════════════════════ */
+#entry-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(139,105,20,0.3);
+  position: relative;
+}
+
+#entry-header::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139,105,20,0.15), transparent);
+  margin-top: 5px;
+}
+
+#entry-date {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 30px;
+  color: var(--green);
+  line-height: 1.2;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+#entry-title {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  caret-color: var(--brown);
+}
+
+#entry-title::placeholder {
+  color: rgba(100,75,40,0.3);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RICH TEXT TOOLBAR
+═══════════════════════════════════════════════════════ */
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, var(--paper-mid), var(--paper));
+  border-bottom: 1px solid rgba(139,105,20,0.25);
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(139,105,20,0.25);
+  margin: 0 4px;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--ink-soft);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.toolbar-btn:hover {
+  background: rgba(139,105,20,0.12);
+  border-color: rgba(139,105,20,0.3);
+  color: var(--ink);
+}
+
+.toolbar-btn.active {
+  background: rgba(58,90,60,0.15);
+  border-color: rgba(58,90,60,0.4);
+  color: var(--green-dark);
+}
+
+#clear-format-btn:hover {
+  background: rgba(124,46,26,0.10) !important;
+  border-color: rgba(124,46,26,0.45) !important;
+  color: var(--red-brown) !important;
+}
+
+.toolbar-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.toolbar-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(100,75,40,0.6);
+  padding: 0 4px;
+  user-select: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   EDITOR
+═══════════════════════════════════════════════════════ */
+#editor {
+  flex: 1;
+  min-height: 420px;
+  outline: none;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17.5px;
+  line-height: 1.9;
+  color: var(--ink);
+  caret-color: var(--brown);
+  word-wrap: break-word;
+  padding-bottom: 20px;
+}
+
+#editor:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(100,75,40,0.3);
+  font-style: italic;
+  pointer-events: none;
+}
+
+#editor h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 16px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(139,105,20,0.2);
+}
+
+#editor h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 12px 0 6px;
+}
+
+#editor h3 {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 22px;
+  color: var(--green);
+  margin: 10px 0 4px;
+}
+
+#editor p { margin: 0 0 6px; }
+
+#editor ul, #editor ol {
+  margin: 6px 0 6px 22px;
+}
+
+#editor li { margin: 3px 0; }
+
+#editor blockquote {
+  border-left: 3px solid rgba(139,105,20,0.4);
+  padding-left: 18px;
+  margin: 12px 0;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+#editor hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139,105,20,0.4), transparent);
+  margin: 16px 0;
+}
+
+#editor strong { font-weight: 700; color: var(--ink); }
+#editor em { font-style: italic; color: var(--ink-soft); }
+#editor u { text-decoration-color: rgba(139,105,20,0.5); }
+
+/* ═══════════════════════════════════════════════════════
+   PAGE FOOTER
+═══════════════════════════════════════════════════════ */
+#page-footer {
+  padding: 10px 64px 12px 72px;
+  border-top: 1px solid rgba(139,105,20,0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, var(--paper), var(--paper-mid));
+  flex-shrink: 0;
+}
+
+.footer-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: none;
+  border: 1px solid rgba(139,105,20,0.2);
+  border-radius: 2px;
+  color: var(--ink-faint);
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.footer-nav-btn:hover {
+  border-color: rgba(139,105,20,0.4);
+  color: var(--ink-soft);
+  background: rgba(139,105,20,0.06);
+}
+.footer-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+#word-count {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: rgba(100,75,40,0.5);
+  letter-spacing: 0.04em;
+}
+
+#entry-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  color: rgba(100,75,40,0.5);
+  letter-spacing: 0.06em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════════════ */
+#empty-state {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  color: rgba(100,75,40,0.5);
+}
+
+#empty-state.visible { display: flex; }
+
+#empty-state .empty-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  filter: grayscale(0.3) opacity(0.6);
+}
+
+#empty-state h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: rgba(100,75,40,0.6);
+  margin-bottom: 8px;
+}
+
+#empty-state p {
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SETTINGS MODAL
+═══════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14,8,2,0.75);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-box {
+  width: 420px;
+  max-width: 92vw;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(160deg, rgba(255,255,240,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(160,120,50,0.08) 0%, transparent 70%);
+  border: 1px solid rgba(139,105,20,0.4);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,240,0.4);
+  border-radius: 2px;
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.25s;
+  overflow: hidden;
+}
+
+.modal-overlay.open .modal-box {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(139,105,20,0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, var(--paper-mid) 0%, transparent 100%);
+}
+
+.modal-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.modal-header .modal-subtitle {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 15px;
+  color: var(--sepia);
+  margin-top: 1px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.modal-close:hover { color: var(--ink); }
+
+.modal-body { padding: 20px 24px; }
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(139,105,20,0.12);
+}
+
+.setting-row:last-child { border-bottom: none; }
+
+.setting-info { flex: 1; padding-right: 20px; }
+
+.setting-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.setting-desc {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* Toggle switch */
+.toggle-wrap { display: flex; align-items: center; }
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0; height: 0;
+  position: absolute;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(100,75,40,0.2);
+  border: 1px solid rgba(100,75,40,0.3);
+  border-radius: 12px;
+  transition: all 0.25s;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  background: rgba(120,90,40,0.6);
+  border-radius: 50%;
+  transition: all 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle input:checked ~ .toggle-track {
+  background: rgba(58,90,60,0.4);
+  border-color: rgba(58,90,60,0.6);
+}
+
+.toggle input:checked ~ .toggle-thumb {
+  left: 23px;
+  background: var(--green);
+}
+
+.modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid rgba(139,105,20,0.2);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: linear-gradient(180deg, transparent 0%, var(--paper-mid) 100%);
+}
+
+.btn-primary {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #3a5a3c, #2a4030);
+  border: 1px solid rgba(106, 143, 108, 0.4);
+  border-radius: 2px;
+  color: #b8d8ba;
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4a6e4c, #3a5040);
+  color: #cce8ce;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE TURN ANIMATION
+═══════════════════════════════════════════════════════ */
+@keyframes pageTurnIn {
+  0% {
+    transform: perspective(1400px) rotateY(-18deg) translateX(-20px);
+    opacity: 0;
+    filter: brightness(0.75);
+  }
+  100% {
+    transform: perspective(1400px) rotateY(0deg) translateX(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes pageTurnInReverse {
+  0% {
+    transform: perspective(1400px) rotateY(18deg) translateX(20px);
+    opacity: 0;
+    filter: brightness(0.75);
+  }
+  100% {
+    transform: perspective(1400px) rotateY(0deg) translateX(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.anim-turn-next { animation: pageTurnIn 0.38s cubic-bezier(0.22,1,0.36,1) forwards; transform-origin: left center; }
+.anim-turn-prev { animation: pageTurnInReverse 0.38s cubic-bezier(0.22,1,0.36,1) forwards; transform-origin: right center; }
+.anim-fade { animation: pageFadeIn 0.25s ease-out forwards; }
+
+/* ═══════════════════════════════════════════════════════
+   LOADING / EXPORT INDICATOR
+═══════════════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20,12,4,0.9);
+  border: 1px solid rgba(139,105,20,0.4);
+  color: #d4a84c;
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  padding: 10px 22px;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 999;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
+
+/* ═══════════════════════════════════════════════════════
+   MISC
+═══════════════════════════════════════════════════════ */
+::selection {
+  background: rgba(58,90,60,0.25);
+  color: var(--ink);
+}
+
+.botanical-divider {
+  text-align: center;
+  color: var(--sepia);
+  opacity: 0.4;
+  font-size: 16px;
+  letter-spacing: 0.5em;
+  margin: 8px 0;
+  user-select: none;
+}
+
+/* Scrollbar for whole page */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120,90,40,0.2) transparent;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  APP SHELL                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <div class="sidebar-emblem">🌿</div>
+      <h1>90 Days of<br>Summer</h1>
+      <div class="subtitle">Golden Hours and Green Leaves</div>
+      <button id="new-entry-btn">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+          <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+        </svg>
+        New Entry
+      </button>
+    </div>
+
+    <div id="entry-list"></div>
+
+    <div id="sidebar-footer">
+      <button class="sidebar-action-btn" id="settings-btn">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+          <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+          <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.892 3.433-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.892-1.64-.901-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.474l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+        </svg>
+        Settings
+      </button>
+      <button class="sidebar-action-btn" id="export-btn">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+        Export PDF
+      </button>
+      <button class="sidebar-action-btn" id="trash-btn">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+        </svg>
+        Trash
+      </button>
+    </div>
+  </aside>
+
+  <!-- JOURNAL PAGE -->
+  <main id="journal-area">
+    <div id="page-container" class="paper-texture">
+
+      <!-- Botanical Watermarks -->
+      <div class="watermark watermark-tl" aria-hidden="true">
+        <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Main branch -->
+          <path d="M160,10 Q130,50 100,90 Q75,125 80,180" stroke="#3a5a3c" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Chamomile flowers -->
+          <g transform="translate(155,18) rotate(25)">
+            <circle cx="0" cy="0" r="5" fill="#3a5a3c"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(45)"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(90)"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(135)"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(180)"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(225)"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(270)"/>
+            <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(315)"/>
+          </g>
+          <!-- Leaves along branch -->
+          <path d="M145,30 Q130,20 115,28 Q128,35 145,30Z" fill="#3a5a3c" opacity="0.7"/>
+          <path d="M128,55 Q115,42 100,48 Q114,56 128,55Z" fill="#3a5a3c" opacity="0.7"/>
+          <path d="M110,78 Q98,65 85,70 Q97,79 110,78Z" fill="#3a5a3c" opacity="0.6"/>
+          <!-- Small leaf cluster -->
+          <path d="M135,40 Q148,30 155,38 Q145,48 135,40Z" fill="#3a5a3c" opacity="0.5"/>
+          <path d="M118,65 Q130,53 138,60 Q127,70 118,65Z" fill="#3a5a3c" opacity="0.5"/>
+          <!-- Secondary branch with fern fronds -->
+          <path d="M100,90 Q85,80 70,85" stroke="#3a5a3c" stroke-width="1" stroke-linecap="round"/>
+          <path d="M70,85 Q62,78 58,82" stroke="#3a5a3c" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M70,85 Q65,92 62,90" stroke="#3a5a3c" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M80,95 Q72,88 68,92" stroke="#3a5a3c" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M80,95 Q75,102 72,100" stroke="#3a5a3c" stroke-width="0.8" stroke-linecap="round"/>
+          <!-- Berries -->
+          <circle cx="170" cy="55" r="3.5" fill="#3a5a3c" opacity="0.6"/>
+          <circle cx="178" cy="62" r="2.5" fill="#3a5a3c" opacity="0.5"/>
+          <circle cx="165" cy="65" r="2" fill="#3a5a3c" opacity="0.5"/>
+          <path d="M170,55 Q173,50 178,62" stroke="#3a5a3c" stroke-width="0.7"/>
+        </svg>
+      </div>
+
+      <div class="watermark watermark-br" aria-hidden="true">
+        <svg viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Fern frond -->
+          <path d="M90,195 Q88,160 85,130 Q78,90 85,50 Q88,28 92,10" stroke="#3a5a3c" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Leaflets left -->
+          <path d="M87,165 Q70,158 55,163 Q68,170 87,165Z" fill="#3a5a3c" opacity="0.6"/>
+          <path d="M86,140 Q66,130 50,135 Q64,142 86,140Z" fill="#3a5a3c" opacity="0.65"/>
+          <path d="M84,116 Q66,104 52,108 Q65,116 84,116Z" fill="#3a5a3c" opacity="0.65"/>
+          <path d="M83,93 Q67,80 55,83 Q66,91 83,93Z" fill="#3a5a3c" opacity="0.6"/>
+          <path d="M83,72 Q70,59 60,62 Q69,70 83,72Z" fill="#3a5a3c" opacity="0.55"/>
+          <path d="M84,52 Q74,40 66,43 Q73,51 84,52Z" fill="#3a5a3c" opacity="0.5"/>
+          <!-- Leaflets right -->
+          <path d="M88,155 Q105,147 118,152 Q106,160 88,155Z" fill="#3a5a3c" opacity="0.55"/>
+          <path d="M87,130 Q104,120 116,124 Q105,132 87,130Z" fill="#3a5a3c" opacity="0.6"/>
+          <path d="M86,106 Q102,95 113,99 Q102,107 86,106Z" fill="#3a5a3c" opacity="0.6"/>
+          <path d="M85,83 Q100,72 110,76 Q100,84 85,83Z" fill="#3a5a3c" opacity="0.55"/>
+          <path d="M85,62 Q97,53 106,57 Q97,65 85,62Z" fill="#3a5a3c" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <!-- Toolbar -->
+      <div id="toolbar">
+        <span class="toolbar-label">Format</span>
+        <button class="toolbar-btn" data-cmd="bold" title="Bold (Ctrl+B)"><strong>B</strong></button>
+        <button class="toolbar-btn" data-cmd="italic" title="Italic (Ctrl+I)"><em>I</em></button>
+        <button class="toolbar-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+        <div class="toolbar-sep"></div>
+        <button class="toolbar-btn" data-cmd="h1" title="Heading 1" style="font-size:11px;width:36px;font-family:'Playfair Display',serif;font-weight:700;">H1</button>
+        <button class="toolbar-btn" data-cmd="h2" title="Heading 2" style="font-size:11px;width:36px;font-family:'Playfair Display',serif;font-weight:600;">H2</button>
+        <button class="toolbar-btn" data-cmd="h3" title="Subheading (Cursive)" style="font-size:11px;width:36px;font-family:'Pinyon Script',cursive;">H3</button>
+        <div class="toolbar-sep"></div>
+        <button class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullet List">
+          <svg viewBox="0 0 16 16"><path d="M5 3.5h8a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 4h8a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 4h8a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zM1.5 3a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1zm0 4a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1zm0 4a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z"/></svg>
+        </button>
+        <button class="toolbar-btn" data-cmd="insertOrderedList" title="Numbered List">
+          <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+        </button>
+        <button class="toolbar-btn" data-cmd="blockquote" title="Block Quote">
+          <svg viewBox="0 0 16 16"><path d="M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 9 7.558V11a1 1 0 0 0 1 1h2zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 3 7.558V11a1 1 0 0 0 1 1h2z"/></svg>
+        </button>
+        <button class="toolbar-btn" data-cmd="insertHorizontalRule" title="Divider Rule" style="font-size:15px;">—</button>
+        <div class="toolbar-sep"></div>
+        <button class="toolbar-btn" data-cmd="justifyLeft" title="Align Left">
+          <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+        </button>
+        <button class="toolbar-btn" data-cmd="justifyCenter" title="Align Center">
+          <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+        </button>
+        <div class="toolbar-sep"></div>
+        <button class="toolbar-btn" id="clear-format-btn" title="Clear all formatting — removes headings, bold, italic, blockquotes, lists" style="font-size:11px;width:52px;color:var(--red-brown);border-color:rgba(124,46,26,0.25);">✕ Clear</button>
+      </div>
+
+      <!-- Scrollable Page Content -->
+      <div id="page-scroll">
+        <div id="page-inner">
+          <div class="page-top-rule">✦</div>
+
+          <div id="entry-header">
+            <div id="entry-date"></div>
+            <input id="entry-title" type="text" placeholder="Title of Observation…" spellcheck="true" autocomplete="off">
+          </div>
+
+          <div id="editor"
+               contenteditable="true"
+               spellcheck="true"
+               data-placeholder="Begin your field notes here…  Describe what you observe: the colour of petals at dusk, the lattice of veins in a fallen leaf, the faint perfume carried on the morning air…"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Page Footer -->
+      <div id="page-footer">
+        <button class="footer-nav-btn" id="prev-btn" disabled>
+          ← Previous
+        </button>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <span id="word-count">0 words</span>
+          <span id="entry-number" style="font-size:11px;color:rgba(100,75,40,0.4);">Entry 1 of 1</span>
+        </div>
+        <button class="footer-nav-btn" id="next-btn" disabled>
+          Next →
+        </button>
+      </div>
+
+    </div><!-- /page-container -->
+  </main>
+
+</div><!-- /app -->
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-box paper-texture">
+    <div class="modal-header">
+      <div>
+        <h2>Journal Settings</h2>
+        <div class="modal-subtitle">Adjust your field experience</div>
+      </div>
+      <button class="modal-close" id="close-settings-btn" title="Close">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Typewriter Sound</div>
+          <div class="setting-desc">A soft, mechanical click accompanies each keystroke — the sound of pen on paper.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-sound" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Page Turn Animation</div>
+          <div class="setting-desc">Navigating between entries plays a smooth, book-like turning animation.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-animation" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Ruled Lines</div>
+          <div class="setting-desc">Display faint horizontal lines across the journal page.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-lines" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Botanical Watermarks</div>
+          <div class="setting-desc">Show the delicate botanical illustrations in the page margins.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-watermarks" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-primary" id="close-settings-btn2">Close & Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRASH MODAL -->
+<div class="modal-overlay" id="trash-modal">
+  <div class="modal-box paper-texture" style="width: 500px;">
+    <div class="modal-header">
+      <div>
+        <h2>Discarded Observations</h2>
+        <div class="modal-subtitle">Notes waiting to return to the earth</div>
+      </div>
+      <button class="modal-close" id="close-trash-btn">✕</button>
+    </div>
+    <div class="modal-body" id="trash-list" style="max-height: 400px; overflow-y: auto; padding: 0;">
+      <!-- Trash items here -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" id="close-trash-btn2">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  JAVASCRIPT                                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────────────
+   SUPABASE CONFIGURATION
+───────────────────────────────────────────────────── */
+const SUPABASE_URL = 'https://jfumbfuwurbllqwajmde.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmdW1iZnV3dXJibGxxd2FqbWRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjk0MjgsImV4cCI6MjA5MDYwNTQyOH0.ncMgbYagggEswoRQh0Qx-nyeT0ll-2KujwZWYOL4dy0';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ─────────────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────────────── */
+let entries = [];
+let trashedEntries = [];
+let currentId = null;
+let audioCtx = null;
+let autoSaveTimer = null;
+let isAnimating = false;
+
+const settings = {
+  typewriterSound: true,
+  pageTurnAnimation: true,
+  ruledLines: true,
+  botanicalWatermarks: true,
+};
+
+/* ─────────────────────────────────────────────────────
+   DOM REFS
+───────────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const editor        = $('editor');
+const entryTitle    = $('entry-title');
+const entryDate     = $('entry-date');
+const entryList     = $('entry-list');
+const wordCount     = $('word-count');
+const entryNumber   = $('entry-number');
+const prevBtn       = $('prev-btn');
+const nextBtn       = $('next-btn');
+const pageContainer = $('page-container');
+const toast         = $('toast');
+
+/* ─────────────────────────────────────────────────────
+   STORAGE (SUPABASE)
+───────────────────────────────────────────────────── */
+async function loadData() {
+  try {
+    showToast('🌿 Gathering field notes...');
+    
+    // Load Active Entries
+    const { data: entryData, error: entryError } = await supabaseClient
+      .from('entries')
+      .select('*')
+      .is('deleted_at', null)
+      .order('date', { ascending: false });
+    
+    if (entryError) throw entryError;
+    entries = entryData || [];
+
+    // Load Trashed Entries
+    const { data: trashData, error: trashError } = await supabaseClient
+      .from('entries')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    
+    if (trashError) throw trashError;
+    trashedEntries = trashData || [];
+
+    // Load Settings
+    const { data: settingsData, error: settingsError } = await supabaseClient
+      .from('settings')
+      .select('*')
+      .single();
+    
+    if (settingsError && settingsError.code !== 'PGRST116') throw settingsError; 
+    
+    if (settingsData) {
+      settings.typewriterSound = settingsData.typewriter_sound;
+      settings.pageTurnAnimation = settingsData.page_turn_animation;
+      settings.ruledLines = settingsData.ruled_lines;
+      settings.botanicalWatermarks = settingsData.botanical_watermarks;
+    }
+
+    if (entries.length === 0) {
+      await createEntry();
+    } else {
+      currentId = entries[0].id;
+    }
+    
+    renderAll();
+    applySettings();
+    showToast('🌿 Journal synced');
+  } catch(e) { 
+    console.error('Supabase load error', e);
+    showToast('⚠ Sync failed. Using offline storage.');
+    loadOfflineData();
+  }
+}
+
+function loadOfflineData() {
+  const raw = localStorage.getItem('botanist_entries');
+  if (raw) entries = JSON.parse(raw);
+  const rawS = localStorage.getItem('botanist_settings');
+  if (rawS) Object.assign(settings, JSON.parse(rawS));
+  if (entries.length === 0) createEntryLocal();
+  else currentId = entries[0].id;
+  renderAll();
+}
+
+async function saveCurrentEntry() {
+  if (!currentId) return;
+  const entry = getEntry(currentId);
+  if (!entry) return;
+  
+  entry.title = entryTitle.value;
+  entry.content = editor.innerHTML;
+
+  try {
+    const { error } = await supabaseClient
+      .from('entries')
+      .upsert({
+        id: entry.id,
+        date: entry.date,
+        title: entry.title,
+        content: entry.content,
+        deleted_at: null
+      });
+    if (error) throw error;
+    
+    // Also save to localStorage as backup
+    localStorage.setItem('botanist_entries', JSON.stringify(entries));
+  } catch(e) {
+    console.error('Supabase save error', e);
+    localStorage.setItem('botanist_entries', JSON.stringify(entries));
+  }
+}
+
+async function saveSettings() {
+  try {
+    const { error } = await supabaseClient
+      .from('settings')
+      .upsert({
+        id: 1,
+        typewriter_sound: settings.typewriterSound,
+        page_turn_animation: settings.pageTurnAnimation,
+        ruled_lines: settings.ruledLines,
+        botanical_watermarks: settings.botanicalWatermarks
+      });
+    if (error) throw error;
+    localStorage.setItem('botanist_settings', JSON.stringify(settings));
+  } catch(e) {
+    console.error('Supabase settings save error', e);
+    localStorage.setItem('botanist_settings', JSON.stringify(settings));
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   ENTRY MANAGEMENT
+───────────────────────────────────────────────────── */
+async function createEntry() {
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    date: new Date().toISOString(),
+    title: '',
+    content: '',
+    deleted_at: null
+  };
+  entries.unshift(entry);
+  
+  try {
+    const { error } = await supabaseClient.from('entries').insert(entry);
+    if (error) throw error;
+  } catch(e) { console.error('Create error', e); }
+  
+  return entry;
+}
+
+function createEntryLocal() {
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    date: new Date().toISOString(),
+    title: '',
+    content: '',
+  };
+  entries.unshift(entry);
+  return entry;
+}
+
+async function deleteEntry(id) {
+  const idx = entries.findIndex(e => e.id === id);
+  if (idx === -1) return;
+  
+  const entry = entries[idx];
+  entry.deleted_at = new Date().toISOString();
+  
+  entries.splice(idx, 1);
+  trashedEntries.unshift(entry);
+  
+  try {
+    const { error } = await supabaseClient
+      .from('entries')
+      .update({ deleted_at: entry.deleted_at })
+      .eq('id', id);
+    if (error) throw error;
+  } catch(e) { console.error('Delete error', e); }
+  if (entries.length === 0) {
+    const e = await createEntry();
+    currentId = e.id;
+  } else {
+    currentId = entries[Math.min(idx, entries.length - 1)].id;
+  }
+  renderAll();
+  showToast('🍂 Entry moved to Trash');
+}
+
+async function restoreEntry(id) {
+  const idx = trashedEntries.findIndex(e => e.id === id);
+  if (idx === -1) return;
+  
+  const entry = trashedEntries[idx];
+  
+  // Optimistic UI Update
+  entry.deleted_at = null;
+  trashedEntries.splice(idx, 1);
+  entries.unshift(entry);
+  entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  currentId = id;
+  renderAll();
+  closeTrash();
+  showToast('🌿 Entry restored');
+
+  // Background Network Sync
+  try {
+    const { error } = await supabaseClient
+      .from('entries')
+      .update({ deleted_at: null })
+      .eq('id', id);
+    if (error) throw error;
+  } catch(e) { 
+    console.error('Restore sync error', e);
+    // Silent fail in background is okay for UX since state is updated locally
+  }
+}
+
+async function permanentlyDeleteEntry(id) {
+  if (!confirm('Permanently delete this observation? It will return to the soil forever.')) return;
+  
+  const idx = trashedEntries.findIndex(e => e.id === id);
+  if (idx !== -1) trashedEntries.splice(idx, 1);
+  
+  try {
+    const { error } = await supabaseClient.from('entries').delete().eq('id', id);
+    if (error) throw error;
+    renderTrashList();
+    showToast('✨ Gone forever');
+  } catch(e) { console.error('Permanent delete error', e); }
+}
+
+function renderTrashList() {
+  const list = $('trash-list');
+  list.innerHTML = '';
+  
+  if (trashedEntries.length === 0) {
+    list.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--ink-faint); font-style: italic;">The trash is empty.</div>`;
+    return;
+  }
+  
+  trashedEntries.forEach(entry => {
+    const d = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    const row = document.createElement('div');
+    row.className = 'setting-row';
+    row.style.padding = '14px 24px';
+    row.innerHTML = `
+      <div class="setting-info">
+        <div class="setting-label">${entry.title || 'Untitled Entry'}</div>
+        <div class="setting-desc">Originally written on ${dateStr}</div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button onclick="restoreEntry('${entry.id}')" class="sidebar-action-btn" style="padding: 4px 10px; font-size: 11px;">Restore</button>
+        <button onclick="permanentlyDeleteEntry('${entry.id}')" class="sidebar-action-btn" style="padding: 4px 10px; font-size: 11px; color: #8b2e1a; border-color: rgba(139,46,26,0.2);">Delete</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function getEntry(id) { return entries.find(e => e.id === id) || null; }
+
+function currentIndex() { return entries.findIndex(e => e.id === currentId); }
+
+/* ─────────────────────────────────────────────────────
+   AUTO-SAVE
+───────────────────────────────────────────────────── */
+function scheduleAutoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    saveCurrentEntry();
+    renderEntryList(); // update preview titles
+  }, 1000);
+}
+
+/* ─────────────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────────────── */
+async function navigateTo(id, direction = 'next') {
+  if (id === currentId || isAnimating) return;
+  
+  await saveCurrentEntry();
+
+  const useAnim = settings.pageTurnAnimation;
+  currentId = id;
+
+  if (useAnim) {
+    isAnimating = true;
+    const cls = direction === 'next' ? 'anim-turn-next' : 'anim-turn-prev';
+    pageContainer.classList.add(cls);
+    renderCurrentEntry();
+    renderEntryList();
+    renderNavButtons();
+    pageContainer.addEventListener('animationend', () => {
+      pageContainer.classList.remove(cls);
+      isAnimating = false;
+    }, { once: true });
+  } else {
+    pageContainer.classList.add('anim-fade');
+    renderCurrentEntry();
+    renderEntryList();
+    renderNavButtons();
+    pageContainer.addEventListener('animationend', () => {
+      pageContainer.classList.remove('anim-fade');
+    }, { once: true });
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   RENDERING
+───────────────────────────────────────────────────── */
+function renderCurrentEntry() {
+  const entry = getEntry(currentId);
+  if (!entry) return;
+
+  // Date
+  const d = new Date(entry.date);
+  entryDate.textContent = d.toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  // Title
+  entryTitle.value = entry.title;
+
+  // Content
+  editor.innerHTML = entry.content || '';
+
+  // Focus
+  setTimeout(() => {
+    if (!entry.content) editor.focus();
+  }, 50);
+
+  updateWordCount();
+}
+
+function renderEntryList() {
+  entryList.innerHTML = '';
+  entries.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'entry-item' + (entry.id === currentId ? ' active' : '');
+    item.dataset.id = entry.id;
+
+    const d = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const stripHtml = h => (h || '').replace(/<[^>]+>/g, '').slice(0, 50);
+    const preview = stripHtml(entry.content);
+
+    item.innerHTML = `
+      <div class="entry-item-date">${dateStr}</div>
+      <div class="entry-item-title">${entry.title || 'Untitled Entry'}</div>
+      ${preview ? `<div class="entry-item-preview">${preview}…</div>` : ''}
+      <div class="entry-item-actions">
+        <button class="entry-delete-btn" data-id="${entry.id}" title="Delete entry">✕</button>
+      </div>
+    `;
+
+    item.addEventListener('click', e => {
+      if (e.target.closest('.entry-delete-btn')) return;
+      const idx = entries.findIndex(en => en.id === entry.id);
+      const curIdx = currentIndex();
+      navigateTo(entry.id, idx > curIdx ? 'prev' : 'next');
+    });
+
+    item.querySelector('.entry-delete-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      if (confirm(`Move "${entry.title || 'this entry'}" to the Trash? You can restore it later.`)) {
+        deleteEntry(entry.id);
+      }
+    });
+
+    entryList.appendChild(item);
+  });
+}
+
+function renderNavButtons() {
+  const idx = currentIndex();
+  prevBtn.disabled = idx >= entries.length - 1;
+  nextBtn.disabled = idx <= 0;
+  entryNumber.textContent = `Entry ${entries.length - idx} of ${entries.length}`;
+}
+
+function renderAll() {
+  renderEntryList();
+  renderCurrentEntry();
+  renderNavButtons();
+}
+
+function updateWordCount() {
+  const text = (editor.innerText || '').trim();
+  const words = text ? text.split(/\\s+/).filter(Boolean).length : 0;
+  wordCount.textContent = `${words.toLocaleString()} word${words !== 1 ? 's' : ''}`;
+}
+
+/* ─────────────────────────────────────────────────────
+   RICH TEXT TOOLBAR
+───────────────────────────────────────────────────── */
+function execCmd(cmd, value = null) {
+  editor.focus();
+  if (cmd === 'h1' || cmd === 'h2' || cmd === 'h3') {
+    document.execCommand('formatBlock', false, cmd);
+  } else if (cmd === 'blockquote') {
+    document.execCommand('formatBlock', false, 'blockquote');
+  } else {
+    document.execCommand(cmd, false, value);
+  }
+}
+
+// Attach toolbar button events (all except clear-format which has its own handler)
+document.querySelectorAll('.toolbar-btn[data-cmd]').forEach(btn => {
+  btn.addEventListener('mousedown', e => {
+    e.preventDefault(); // prevent editor blur
+    execCmd(btn.dataset.cmd);
+    updateToolbarState();
+  });
+});
+
+/* ─────────────────────────────────────────────────────
+   CLEAR ALL FORMATTING  (deep — handles block + inline)
+───────────────────────────────────────────────────── */
+document.getElementById('clear-format-btn').addEventListener('mousedown', e => {
+  e.preventDefault();
+  editor.focus();
+
+  const sel = window.getSelection();
+
+  // If nothing selected, select all content in editor
+  if (!sel || sel.rangeCount === 0 || sel.toString().trim() === '') {
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  const range = sel.getRangeAt(0);
+
+  // ── Step 1: collect every block-level element touched by the selection ──
+  const blockTags = new Set(['H1','H2','H3','H4','H5','H6','BLOCKQUOTE','PRE']);
+  const listTags  = new Set(['UL','OL']);
+  const listItemTags = new Set(['LI']);
+
+  // Walk all nodes within the editor and gather affected blocks
+  function getAffectedBlocks() {
+    const blocks = [];
+    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_ELEMENT, null);
+    let node = walker.nextNode();
+    while (node) {
+      if (
+        (blockTags.has(node.tagName) || listTags.has(node.tagName)) &&
+        range.intersectsNode(node)
+      ) {
+        blocks.push(node);
+      }
+      node = walker.nextNode();
+    }
+    return blocks;
+  }
+
+  const blocksToConvert = getAffectedBlocks();
+
+  // ── Step 2: unwrap/convert each affected block ──
+  blocksToConvert.forEach(node => {
+    if (!editor.contains(node)) return; // already processed (child of converted parent)
+
+    if (listTags.has(node.tagName)) {
+      // Unwrap list: turn each <li> into a <p>, remove the <ul>/<ol> wrapper
+      const fragment = document.createDocumentFragment();
+      Array.from(node.querySelectorAll('li')).forEach(li => {
+        const p = document.createElement('p');
+        p.innerHTML = li.innerHTML;
+        fragment.appendChild(p);
+      });
+      node.parentNode.replaceChild(fragment, node);
+
+    } else if (blockTags.has(node.tagName)) {
+      // Convert heading / blockquote → plain <p>
+      const p = document.createElement('p');
+      p.innerHTML = node.innerHTML;
+      node.parentNode.replaceChild(p, node);
+    }
+  });
+
+  // ── Step 3: strip inline formatting (bold, italic, underline, etc.) ──
+  // Re-select after DOM mutations
+  try {
+    const newRange = document.createRange();
+    newRange.selectNodeContents(editor);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+  } catch(_) {}
+
+  document.execCommand('removeFormat', false, null);
+  document.execCommand('justifyLeft',  false, null);
+
+  // ── Step 4: also strip any leftover inline <span> style attributes ──
+  editor.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+  editor.querySelectorAll('font, span').forEach(el => {
+    if (el.attributes.length === 0 || (el.tagName === 'SPAN' && !el.className)) {
+      // unwrap it — move children out, remove the tag
+      const parent = el.parentNode;
+      while (el.firstChild) parent.insertBefore(el.firstChild, el);
+      parent.removeChild(el);
+    }
+  });
+
+  updateToolbarState();
+  scheduleAutoSave();
+});
+
+function updateToolbarState() {
+  const cmds = ['bold', 'italic', 'underline', 'insertUnorderedList', 'insertOrderedList', 'justifyLeft', 'justifyCenter'];
+  cmds.forEach(cmd => {
+    const btn = document.querySelector(`.toolbar-btn[data-cmd="${cmd}"]`);
+    if (btn) btn.classList.toggle('active', document.queryCommandState(cmd));
+  });
+
+  // Highlight active block format
+  const blockBtns = { h1: 'H1', h2: 'H2', h3: 'H3', blockquote: 'BLOCKQUOTE' };
+  const sel = window.getSelection();
+  let currentBlock = null;
+  if (sel && sel.rangeCount > 0) {
+    let node = sel.getRangeAt(0).commonAncestorContainer;
+    while (node && node !== editor) {
+      if (node.nodeType === 1) { currentBlock = node.tagName; break; }
+      node = node.parentNode;
+    }
+  }
+  ['h1','h2','h3'].forEach(tag => {
+    const btn = document.querySelector(`.toolbar-btn[data-cmd="${tag}"]`);
+    if (btn) btn.classList.toggle('active', currentBlock === tag.toUpperCase());
+  });
+  const bqBtn = document.querySelector('.toolbar-btn[data-cmd="blockquote"]');
+  if (bqBtn) bqBtn.classList.toggle('active', currentBlock === 'BLOCKQUOTE');
+}
+
+editor.addEventListener('keyup', updateToolbarState);
+editor.addEventListener('mouseup', updateToolbarState);
+
+/* ─────────────────────────────────────────────────────
+   TYPEWRITER SOUND ENGINE
+───────────────────────────────────────────────────── */
+function initAudio() {
+  if (audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  } catch(e) {}
+}
+
+function playTypewriterClick(isReturn = false) {
+  if (!settings.typewriterSound || !audioCtx) return;
+  try {
+    const now = audioCtx.currentTime;
+
+    if (isReturn) {
+      // Carriage return — a slightly heavier thunk
+      const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.12, audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.03));
+      }
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 900;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      src.start(now);
+    } else {
+      // Regular keystroke — crisp mechanical click
+      const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.055, audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      const freq = 700 + Math.random() * 500;
+      for (let i = 0; i < data.length; i++) {
+        const t = i / audioCtx.sampleRate;
+        const noise = (Math.random() * 2 - 1) * 0.4;
+        const tone = Math.sin(2 * Math.PI * freq * t);
+        data[i] = (noise + tone * 0.6) * Math.exp(-i / (audioCtx.sampleRate * 0.012));
+      }
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1200 + Math.random() * 300;
+      filter.Q.value = 0.8;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      gain.gain.setValueAtTime(0.10, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      src.start(now);
+    }
+  } catch(e) {}
+}
+
+/* ─────────────────────────────────────────────────────
+   EDITOR EVENTS
+───────────────────────────────────────────────────── */
+editor.addEventListener('keydown', e => {
+  initAudio();
+  if (settings.typewriterSound) {
+    if (e.key === 'Enter') playTypewriterClick(true);
+    else if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+      playTypewriterClick(false);
+    }
+  }
+});
+
+editor.addEventListener('input', () => {
+  updateWordCount();
+  scheduleAutoSave();
+});
+
+entryTitle.addEventListener('keydown', e => {
+  initAudio();
+  if (settings.typewriterSound && e.key.length === 1) playTypewriterClick(false);
+});
+
+entryTitle.addEventListener('input', scheduleAutoSave);
+
+/* ─────────────────────────────────────────────────────
+   GLOBAL BUTTON SOUND
+───────────────────────────────────────────────────── */
+document.addEventListener('mousedown', e => {
+  const btn = e.target.closest('button');
+  if (btn) {
+    initAudio();
+    if (settings.typewriterSound) {
+      playTypewriterClick(false);
+    }
+  }
+});
+
+/* ─────────────────────────────────────────────────────
+   NAVIGATION BUTTONS
+───────────────────────────────────────────────────── */
+prevBtn.addEventListener('click', () => {
+  const idx = currentIndex();
+  if (idx < entries.length - 1) navigateTo(entries[idx + 1].id, 'prev');
+});
+
+nextBtn.addEventListener('click', () => {
+  const idx = currentIndex();
+  if (idx > 0) navigateTo(entries[idx - 1].id, 'next');
+});
+
+/* ─────────────────────────────────────────────────────
+   NEW ENTRY
+───────────────────────────────────────────────────── */
+$('new-entry-btn').addEventListener('click', async () => {
+  await saveCurrentEntry();
+  const entry = await createEntry();
+  currentId = entry.id;
+  renderAll();
+  entryTitle.focus();
+  showToast('🌿 New entry begun');
+});
+
+/* ─────────────────────────────────────────────────────
+   SETTINGS
+───────────────────────────────────────────────────── */
+function openSettings() {
+  syncSettingsUI();
+  $('settings-modal').classList.add('open');
+}
+
+async function closeSettings() {
+  $('settings-modal').classList.remove('open');
+  await saveSettings();
+  applySettings();
+}
+
+function openTrash() {
+  renderTrashList();
+  $('trash-modal').classList.add('open');
+}
+
+function closeTrash() {
+  $('trash-modal').classList.remove('open');
+}
+
+function syncSettingsUI() {
+  $('toggle-sound').checked = settings.typewriterSound;
+  $('toggle-animation').checked = settings.pageTurnAnimation;
+  $('toggle-lines').checked = settings.ruledLines;
+  $('toggle-watermarks').checked = settings.botanicalWatermarks;
+}
+
+function applySettings() {
+  // Ruled lines
+  if (settings.ruledLines) {
+    pageContainer.classList.remove('no-lines');
+  } else {
+    pageContainer.classList.add('no-lines');
+  }
+
+  // Watermarks
+  document.querySelectorAll('.watermark').forEach(el => {
+    el.style.display = settings.botanicalWatermarks ? '' : 'none';
+  });
+}
+
+$('settings-btn').addEventListener('click', openSettings);
+$('close-settings-btn').addEventListener('click', closeSettings);
+$('close-settings-btn2').addEventListener('click', closeSettings);
+
+$('trash-btn').addEventListener('click', openTrash);
+$('close-trash-btn').addEventListener('click', closeTrash);
+$('close-trash-btn2').addEventListener('click', closeTrash);
+
+$('settings-modal').addEventListener('click', e => {
+  if (e.target === $('settings-modal')) closeSettings();
+});
+
+$('trash-modal').addEventListener('click', e => {
+  if (e.target === $('trash-modal')) closeTrash();
+});
+
+['toggle-sound','toggle-animation','toggle-lines','toggle-watermarks'].forEach(id => {
+  $(id).addEventListener('change', e => {
+    const key = {
+      'toggle-sound': 'typewriterSound',
+      'toggle-animation': 'pageTurnAnimation',
+      'toggle-lines': 'ruledLines',
+      'toggle-watermarks': 'botanicalWatermarks',
+    }[id];
+    settings[key] = e.target.checked;
+    applySettings();
+  });
+});
+
+/* ─────────────────────────────────────────────────────
+   PDF EXPORT  (print-window method — always works)
+───────────────────────────────────────────────────── */
+$('export-btn').addEventListener('click', async () => {
+  await saveCurrentEntry();
+
+  if (!entries.length) { showToast('No entries to export'); return; }
+
+  showToast('🌿 Opening print dialog — choose "Save as PDF"…', 4500);
+
+  // Sort entries oldest first for export
+  const exportEntries = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // Build per-entry pages
+  const pages = exportEntries.map((entry, i) => {
+    const d = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    const isLast = i === exportEntries.length - 1;
+
+    // Inline the rich-text content styles so they survive the new window
+    const styledContent = (entry.content || '<p><em>No observations recorded.</em></p>')
+      .replace(/<h1>/g, '<h1 style="font-family:\'Playfair Display\',Georgia,serif;font-size:20pt;font-weight:700;color:#281808;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid rgba(139,105,20,0.25);">')
+      .replace(/<h2>/g, '<h2 style="font-family:\'Playfair Display\',Georgia,serif;font-size:16pt;font-weight:600;font-style:italic;color:#4a3120;margin:12px 0 6px;">')
+      .replace(/<h3>/g, '<h3 style="font-family:\'Pinyon Script\',cursive;font-size:20pt;color:#3a5a3c;margin:10px 0 4px;">')
+      .replace(/<blockquote>/g, '<blockquote style="border-left:3px solid rgba(139,105,20,0.4);padding-left:18px;margin:12px 0;color:#4a3120;font-style:italic;">')
+      .replace(/<strong>/g, '<strong style="font-weight:700;color:#1a0e06;">')
+      .replace(/<em>/g, '<em style="font-style:italic;color:#4a3120;">');
+
+    return `
+      <div class="entry-page${isLast ? '' : ' page-break'}">
+        <div class="margin-line"></div>
+
+        <div class="top-rule">✦ ✦ ✦</div>
+
+        <div class="entry-date">${dateStr}</div>
+
+        <h2 class="entry-title">${entry.title || 'Untitled Entry'}</h2>
+        <div class="title-rule"></div>
+
+        <div class="entry-body">${styledContent}</div>
+
+        <div class="entry-num">— ${i + 1} —</div>
+
+        <!-- Botanical watermark SVG (top-right corner) -->
+        <div class="watermark watermark-tr" aria-hidden="true">
+          <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M160,10 Q130,50 100,90 Q75,125 80,180" stroke="#3a5a3c" stroke-width="1.8" stroke-linecap="round"/>
+            <g transform="translate(155,18) rotate(25)">
+              <circle cx="0" cy="0" r="5" fill="#3a5a3c"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(45)"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(90)"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(135)"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(180)"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(225)"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(270)"/>
+              <ellipse cx="0" cy="-10" rx="3" ry="6" fill="#3a5a3c" opacity="0.8" transform="rotate(315)"/>
+            </g>
+            <path d="M145,30 Q130,20 115,28 Q128,35 145,30Z" fill="#3a5a3c" opacity="0.7"/>
+            <path d="M128,55 Q115,42 100,48 Q114,56 128,55Z" fill="#3a5a3c" opacity="0.7"/>
+            <path d="M110,78 Q98,65 85,70 Q97,79 110,78Z" fill="#3a5a3c" opacity="0.6"/>
+            <path d="M135,40 Q148,30 155,38 Q145,48 135,40Z" fill="#3a5a3c" opacity="0.5"/>
+            <path d="M100,90 Q85,80 70,85" stroke="#3a5a3c" stroke-width="1" stroke-linecap="round"/>
+            <path d="M70,85 Q62,78 58,82" stroke="#3a5a3c" stroke-width="0.8" stroke-linecap="round"/>
+            <path d="M70,85 Q65,92 62,90" stroke="#3a5a3c" stroke-width="0.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Fern watermark (bottom-left) -->
+        <div class="watermark watermark-bl" aria-hidden="true">
+          <svg viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M90,195 Q88,160 85,130 Q78,90 85,50 Q88,28 92,10" stroke="#3a5a3c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M87,165 Q70,158 55,163 Q68,170 87,165Z" fill="#3a5a3c" opacity="0.6"/>
+            <path d="M86,140 Q66,130 50,135 Q64,142 86,140Z" fill="#3a5a3c" opacity="0.65"/>
+            <path d="M84,116 Q66,104 52,108 Q65,116 84,116Z" fill="#3a5a3c" opacity="0.65"/>
+            <path d="M83,93 Q67,80 55,83 Q66,91 83,93Z" fill="#3a5a3c" opacity="0.6"/>
+            <path d="M88,155 Q105,147 118,152 Q106,160 88,155Z" fill="#3a5a3c" opacity="0.55"/>
+            <path d="M87,130 Q104,120 116,124 Q105,132 87,130Z" fill="#3a5a3c" opacity="0.6"/>
+            <path d="M86,106 Q102,95 113,99 Q102,107 86,106Z" fill="#3a5a3c" opacity="0.6"/>
+          </svg>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const printHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>90 Days of Summer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  /* Force the browser to print background colors */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f6edd9;
+    font-family: 'EB Garamond', Georgia, serif;
+    color: #281808;
+  }
+
+  .entry-page {
+    position: relative;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 18mm 22mm 18mm 26mm;
+    background-color: #f6edd9;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 7.8mm,
+        rgba(180,150,90,0.13) 7.8mm,
+        rgba(180,150,90,0.13) 8.05mm
+      ),
+      linear-gradient(160deg, rgba(255,255,240,0.45) 0%, transparent 55%, rgba(180,140,70,0.09) 100%);
+    overflow: hidden;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+
+  /* Left red margin rule */
+  .margin-line {
+    position: absolute;
+    left: 20mm;
+    top: 0; bottom: 0;
+    width: 0.4mm;
+    background: rgba(180,80,60,0.22);
+  }
+
+  .top-rule {
+    text-align: center;
+    color: #8b6914;
+    font-size: 9pt;
+    letter-spacing: 0.4em;
+    opacity: 0.55;
+    margin-bottom: 6mm;
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .entry-date {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 22pt;
+    color: #3a5a3c;
+    line-height: 1.15;
+    margin-bottom: 3mm;
+  }
+
+  .entry-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 19pt;
+    font-weight: 700;
+    color: #1a0e06;
+    line-height: 1.2;
+    margin: 0 0 2mm 0;
+    padding: 0;
+    border: none;
+  }
+
+  .title-rule {
+    height: 0.3mm;
+    background: linear-gradient(90deg, rgba(139,105,20,0.5), rgba(139,105,20,0.15), transparent);
+    margin-bottom: 5mm;
+  }
+
+  .entry-body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 11.5pt;
+    line-height: 2.0;
+    color: #281808;
+  }
+
+  .entry-body p  { margin: 0 0 2mm; }
+  .entry-body h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 15pt; font-weight: 700; color: #281808; margin: 5mm 0 2mm; padding-bottom: 1mm; border-bottom: 0.3mm solid rgba(139,105,20,0.25); }
+  .entry-body h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 13pt; font-weight: 600; font-style: italic; color: #4a3120; margin: 4mm 0 2mm; }
+  .entry-body h3 { font-family: 'Pinyon Script', cursive; font-size: 17pt; color: #3a5a3c; margin: 3mm 0 1mm; }
+  .entry-body ul, .entry-body ol { margin: 2mm 0 2mm 8mm; }
+  .entry-body li { margin: 1mm 0; }
+  .entry-body blockquote { border-left: 0.8mm solid rgba(139,105,20,0.4); padding-left: 5mm; margin: 3mm 0; color: #4a3120; font-style: italic; }
+  .entry-body strong { font-weight: 700; color: #1a0e06; }
+  .entry-body em { font-style: italic; color: #4a3120; }
+  .entry-body hr { border: none; height: 0.3mm; background: linear-gradient(90deg, transparent, rgba(139,105,20,0.4), transparent); margin: 4mm 0; }
+
+  .entry-num {
+    position: absolute;
+    bottom: 8mm;
+    right: 14mm;
+    font-family: 'Playfair Display', serif;
+    font-size: 8pt;
+    color: rgba(100,75,40,0.45);
+    letter-spacing: 0.1em;
+  }
+
+  /* Watermarks */
+  .watermark {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.075;
+  }
+  .watermark-tr {
+    top: -5mm;
+    right: -5mm;
+    width: 52mm;
+    height: 58mm;
+  }
+  .watermark-bl {
+    bottom: -5mm;
+    left: 8mm;
+    width: 46mm;
+    height: 52mm;
+    transform: rotate(180deg);
+  }
+</style>
+</head>
+<body>
+  ${pages}
+  <script>
+    // Wait for fonts to load, then print
+    document.fonts.ready.then(() => {
+      setTimeout(() => { window.print(); }, 350);
+    });
+  <\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if (!win) {
+    showToast('⚠ Please allow pop-ups, then try again');
+    return;
+  }
+  win.document.open();
+  win.document.write(printHTML);
+  win.document.close();
+});
+
+/* ─────────────────────────────────────────────────────
+   TOAST NOTIFICATION
+───────────────────────────────────────────────────── */
+let toastTimer = null;
+function showToast(msg, duration = 2800) {
+  clearTimeout(toastTimer);
+  toast.textContent = msg;
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+/* ─────────────────────────────────────────────────────
+   KEYBOARD SHORTCUTS
+───────────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'n') {
+    e.preventDefault();
+    $('new-entry-btn').click();
+  }
+  if (e.key === 'Escape' && $('settings-modal').classList.contains('open')) {
+    closeSettings();
+  }
+});
+
+/* ─────────────────────────────────────────────────────
+   CSS: No-lines override
+───────────────────────────────────────────────────── */
+const styleEl = document.createElement('style');
+styleEl.textContent = `
+  .no-lines {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E"),
+      linear-gradient(160deg, rgba(255,255,240,0.4) 0%, transparent 50%, rgba(180,140,70,0.12) 100%),
+      radial-gradient(ellipse at 20% 20%, rgba(255,255,240,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(160,120,50,0.10) 0%, transparent 60%) !important;
+  }
+`;
+document.head.appendChild(styleEl);
+
+/* ─────────────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────────────── */
+async function init() {
+  initAudio();
+  await loadData();
+
+  // Daily New Entry Logic
+  const today = new Date().toLocaleDateString();
+  const latestEntry = entries.length > 0 ? new Date(entries[0].date).toLocaleDateString() : null;
+
+  if (latestEntry !== today) {
+    const e = await createEntry();
+    currentId = e.id;
+    showToast('🌿 A new day begins. Fresh entry started.');
+  } else if (entries.length > 0 && !currentId) {
+    currentId = entries[0].id;
+  }
+  
+  renderAll();
+  applySettings();
+
+  // Show welcome toast if not already shown by new entry
+  if (latestEntry === today) {
+    setTimeout(() => showToast('🌿 Welcome back to your Field Journal'), 400);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// Save before unload
+window.addEventListener('beforeunload', () => {
+  flushCurrentEntry();
+  saveEntries();
+});
+</script>
+
+</body>
+</html>
