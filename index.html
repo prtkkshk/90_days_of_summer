@@ -169,6 +169,31 @@ html, body {
   color: #cce8ce;
 }
 
+#sync-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #7c4a1e, #5a3516);
+  border: 1px solid rgba(180, 130, 40, 0.3);
+  border-radius: 2px;
+  color: #f6edd9;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#sync-btn:hover {
+  background: linear-gradient(135deg, #8c5a2e, #6a4526);
+  border-color: rgba(212, 168, 76, 0.5);
+  color: #ffffff;
+}
+
 #entry-list {
   flex: 1;
   overflow-y: auto;
@@ -991,6 +1016,13 @@ html, body {
         </svg>
         New Entry
       </button>
+      <button id="sync-btn" title="Sync local data to Supabase">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+          <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+        </svg>
+        Sync to Cloud
+      </button>
     </div>
 
     <div id="entry-list"></div>
@@ -1112,6 +1144,7 @@ html, body {
         </button>
         <div class="toolbar-sep"></div>
         <button class="toolbar-btn" id="clear-format-btn" title="Clear all formatting — removes headings, bold, italic, blockquotes, lists" style="font-size:11px;width:52px;color:var(--red-brown);border-color:rgba(124,46,26,0.25);">✕ Clear</button>
+        <button class="toolbar-btn" id="save-entry-btn" title="Save current entry to Cloud" style="font-size:11px;width:52px;color:var(--green);border-color:rgba(58,90,60,0.25);margin-left:4px;">💾 Save</button>
       </div>
 
       <!-- Scrollable Page Content -->
@@ -1263,6 +1296,7 @@ let currentId = null;
 let audioCtx = null;
 let autoSaveTimer = null;
 let isAnimating = false;
+let hasDeletedAtColumn = true;
 
 const settings = {
   typewriterSound: true,
@@ -1300,24 +1334,51 @@ async function loadData() {
     }
 
     // Load Active Entries
-    const { data: entryData, error: entryError } = await supabaseClient
-      .from('entries')
-      .select('*')
-      .is('deleted_at', null)
-      .order('date', { ascending: false });
-    
-    if (entryError) throw entryError;
-    entries = entryData || [];
+    let entryData = [];
+    try {
+      const { data, error } = await supabaseClient
+        .from('entries')
+        .select('*')
+        .is('deleted_at', null)
+        .order('date', { ascending: false });
+      if (error) throw error;
+      entryData = data || [];
+      hasDeletedAtColumn = true;
+    } catch (err) {
+      if (err.message && err.message.includes('deleted_at')) {
+        console.warn('Supabase: deleted_at column missing, loading all entries as active');
+        hasDeletedAtColumn = false;
+        const { data, error } = await supabaseClient
+          .from('entries')
+          .select('*')
+          .order('date', { ascending: false });
+        if (error) throw error;
+        entryData = data || [];
+      } else {
+        throw err;
+      }
+    }
+    entries = entryData;
 
     // Load Trashed Entries
-    const { data: trashData, error: trashError } = await supabaseClient
-      .from('entries')
-      .select('*')
-      .not('deleted_at', 'is', null)
-      .order('deleted_at', { ascending: false });
-    
-    if (trashError) throw trashError;
-    trashedEntries = trashData || [];
+    let trashData = [];
+    try {
+      const { data, error } = await supabaseClient
+        .from('entries')
+        .select('*')
+        .not('deleted_at', 'is', null)
+        .order('deleted_at', { ascending: false });
+      if (error) throw error;
+      trashData = data || [];
+    } catch (err) {
+      if (err.message && err.message.includes('deleted_at')) {
+        trashData = [];
+      } else {
+        // Not throwing here to allow app to load even if trash fails
+        console.error('Trash load error:', err);
+      }
+    }
+    trashedEntries = trashData;
 
     // Load Settings
     const { data: settingsData, error: settingsError } = await supabaseClient
@@ -1374,13 +1435,17 @@ async function syncOfflineData(isManual = false) {
     if (!exists || isManual) {
       console.log(`Syncing entry: ${localEntry.id}`);
       try {
-        const { error } = await supabaseClient.from('entries').upsert({
+        const payload = {
           id: localEntry.id,
           date: localEntry.date,
           title: localEntry.title,
-          content: localEntry.content,
-          deleted_at: localEntry.deleted_at || null
-        });
+          content: localEntry.content
+        };
+        if (hasDeletedAtColumn) {
+          payload.deleted_at = localEntry.deleted_at || null;
+        }
+
+        const { error } = await supabaseClient.from('entries').upsert(payload);
         if (!error) syncCount++;
         else {
           console.error(`Supabase error for ${localEntry.id}:`, error);
@@ -1396,11 +1461,21 @@ async function syncOfflineData(isManual = false) {
   if (syncCount > 0) {
     showToast(`🌿 Synced ${syncCount} entries to Supabase`);
     // Re-fetch to ensure state is consistent
-    const { data: entryData } = await supabaseClient
-      .from('entries')
-      .select('*')
-      .is('deleted_at', null)
-      .order('date', { ascending: false });
+    let entryData = [];
+    if (hasDeletedAtColumn) {
+      const { data } = await supabaseClient
+        .from('entries')
+        .select('*')
+        .is('deleted_at', null)
+        .order('date', { ascending: false });
+      entryData = data || [];
+    } else {
+      const { data } = await supabaseClient
+        .from('entries')
+        .select('*')
+        .order('date', { ascending: false });
+      entryData = data || [];
+    }
     if (entryData) entries = entryData;
     renderAll();
   } else if (isManual && failCount === 0) {
@@ -1429,15 +1504,19 @@ async function saveCurrentEntry() {
   entry.content = editor.innerHTML;
 
   try {
+    const payload = {
+      id: entry.id,
+      date: entry.date,
+      title: entry.title,
+      content: entry.content
+    };
+    if (hasDeletedAtColumn) {
+      payload.deleted_at = null;
+    }
+
     const { error } = await supabaseClient
       .from('entries')
-      .upsert({
-        id: entry.id,
-        date: entry.date,
-        title: entry.title,
-        content: entry.content,
-        deleted_at: null
-      });
+      .upsert(payload);
     if (error) throw error;
     
     // Also save to localStorage as backup
@@ -1481,7 +1560,16 @@ async function createEntry() {
   entries.unshift(entry);
   
   try {
-    const { error } = await supabaseClient.from('entries').insert(entry);
+    const payload = {
+      id: entry.id,
+      date: entry.date,
+      title: entry.title,
+      content: entry.content
+    };
+    if (hasDeletedAtColumn) {
+      payload.deleted_at = null;
+    }
+    const { error } = await supabaseClient.from('entries').insert(payload);
     if (error) throw error;
   } catch(e) { console.error('Create error', e); }
   
@@ -1510,11 +1598,15 @@ async function deleteEntry(id) {
   trashedEntries.unshift(entry);
   
   try {
-    const { error } = await supabaseClient
-      .from('entries')
-      .update({ deleted_at: entry.deleted_at })
-      .eq('id', id);
-    if (error) throw error;
+    if (hasDeletedAtColumn) {
+      const { error } = await supabaseClient
+        .from('entries')
+        .update({ deleted_at: entry.deleted_at })
+        .eq('id', id);
+      if (error) throw error;
+    } else {
+      console.warn('Supabase: deleted_at column missing, entry moved to local trash only');
+    }
   } catch(e) { console.error('Delete error', e); }
   if (entries.length === 0) {
     const e = await createEntry();
@@ -1544,15 +1636,17 @@ async function restoreEntry(id) {
   showToast('🌿 Entry restored');
 
   // Background Network Sync
-  try {
-    const { error } = await supabaseClient
-      .from('entries')
-      .update({ deleted_at: null })
-      .eq('id', id);
-    if (error) throw error;
-  } catch(e) { 
-    console.error('Restore sync error', e);
-    // Silent fail in background is okay for UX since state is updated locally
+  if (hasDeletedAtColumn) {
+    try {
+      const { error } = await supabaseClient
+        .from('entries')
+        .update({ deleted_at: null })
+        .eq('id', id);
+      if (error) throw error;
+    } catch(e) { 
+      console.error('Restore sync error', e);
+      // Silent fail in background is okay for UX since state is updated locally
+    }
   }
 }
 
@@ -2000,6 +2094,18 @@ $('new-entry-btn').addEventListener('click', async () => {
   renderAll();
   entryTitle.focus();
   showToast('🌿 New entry begun');
+});
+
+/* ─────────────────────────────────────────────────────
+   SYNC DATA
+───────────────────────────────────────────────────── */
+$('sync-btn').addEventListener('click', async () => {
+  await syncOfflineData(true);
+});
+
+$('save-entry-btn').addEventListener('click', async () => {
+  await saveCurrentEntry();
+  showToast('🌿 Entry saved to Cloud');
 });
 
 /* ─────────────────────────────────────────────────────
